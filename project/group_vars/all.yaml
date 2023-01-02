@@ -1,0 +1,61 @@
+---
+
+# These are all the common variables
+
+# customer abbreviation
+default_customer_abbrev: "gwtk"
+
+# operating system version (assume redhat7x or redhat8x)
+default_os_ver: "rhel78"
+# default_os_ver: "rhel82"
+
+# BODS version
+default_bods_ver: "4200"
+# default_bods_ver: "4300"
+
+# Database version
+default_db_ver: "oracle19c"
+# default_db_ver: "oracle20c"
+
+## Option2: hard code the supported versions and corresponding ansible role to include
+## this way we can control what we support
+
+# create mapping of operating system values and corresponding roles to run
+supported_os_roles_dict: {
+  "rhel78": "rhel7x",
+  "rhel82": "rhel8x",
+  "rhel83": "rhel8x",
+}
+
+# create mapping of database values and corresponding roles to run
+supported_db_roles_dict: {
+  "oracle19c" : "Ora19c",
+  "oracle20c" : "Ora20c"
+}
+
+# create mapping of BODS versions and corresponding roles to run
+supported_bods_roles_dict: {
+  "4200" : "Bods4200",
+  "4300" : "Bods4300"
+}
+
+
+# Option3: Hard code array of role names to run (prob not best approach)
+hardcoded_roles_to_run:
+  - rhel7x
+  - Ora19c
+  - Bods4200
+
+# ansible environment_vars to lookup for all executions
+action_env_vars_dict: { 
+  "rdsStack" : "stackPrep/rdsstack",
+  "adConnector" : "adConnector",
+  "dmworkspace" : "workspace/infra",
+  "codedeploy_sapbods" : "sapbods/codedeploy",
+  "codedeploy_cogdisp" : "cogdisp/codedeploy",
+  "stackPrep" : "stackPrep",
+  "codedeploy_coggw" : "coggw/codedeploy",
+  "objectdeploy_datahub" : "sapbods/objectdeploy",
+  "ootbobjectdeploy_datahub" : "sapbods/repodeploy",
+  "objectdeploy_infocenter": "cogdisp/objectdeploy"
+}

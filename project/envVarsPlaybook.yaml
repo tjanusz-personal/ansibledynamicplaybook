@@ -1,0 +1,72 @@
+---
+# This playbook demonstrates our options for environment vars w/in ansible
+# Attempts to demonstrate
+# ansible_env - base dict of all env vars (requires gather_facts: yes)
+# lookup - lookup approach using 'env'
+# directory lookup - simulated approach to mapping env var values to directories to run
+# 
+# Note: can't seem to pass env params at command line though using -e option
+
+- name: Example for how to use environment vars
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+
+  # Option 1: can define regular vars here if want
+  vars:
+    env_vars: 
+      - stackPrep: false
+      - rdsStack: false
+
+  # Option 2: can define env vars values here if need be
+  environment:
+    - stackPrep: true
+
+  # Option 1: can do hard wired ref's like this (but not useful)
+  # environment:
+  #   - '{{env_vars[0]}}'
+  #   - '{{env_vars[1]}}'
+
+  # this doesn't work!
+  # environment: 
+  #   "{{env_vars}}"
+
+  # specific tasks to execute w/in this playbook
+  tasks:
+    - name: Print example env variable lookup using env
+      debug:
+        msg: "{{ lookup('env','HOME') }} is an environment variable"
+
+    - name: Print ansible_env (entire contents of environment vars)
+      debug:
+        msg: "{{ ansible_env }}"
+
+    - name: Print if stack prep exists
+      debug:
+        msg: "found stack prep"
+      when: ansible_env.stackPrep is defined
+
+    # use this to dump out what's in our loop
+    # - name: Find matching directory based on environment variables
+    #   debug:
+    #     # msg: "{{(ansible_env[item.key] | default(false)) | bool | type_debug}}"
+    #     msg: "{{(ansible_env[item.key] | default(false)) | bool}}"
+    #   with_dict: "{{action_env_vars_dict}}"
+
+    # loop through action_env_var_dict dictionary
+    # if ansible_env dictionary has a key defined and the value is true (needed to coerce to bool)
+    - name: Find matching directory based on environment variables
+      set_fact:
+        directory_to_run: "{{item.value}}"
+      when: "((ansible_env[item.key] | default(false)) | bool )"
+      with_dict: "{{action_env_vars_dict}}"
+      # use this if want to control what loop outputs for each item
+      # loop_control:
+      #   label: "Searching for: {{ item.key }}"
+
+    - name: Print out directory to matching given env variable
+      debug:
+        msg: "directory to run is: {{directory_to_run | default('not found')}}"
+
+
+...

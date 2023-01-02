@@ -1,0 +1,21 @@
+---
+
+## BODS4200 tasks to print out statements for tasks
+
+- name: Debug listing of important variables
+  debug: 
+    msg: "BODS4200 Tasks START - Customer: {{default_customer_abbrev}} OS Version: {{default_os_ver}}"
+
+- name: Throw error on invalid directory
+  get_url:
+    url: http://example.com/path/file.conf
+    dest: /etc/foo.conf
+    mode: '0440'
+  ignore_errors: true
+
+
+- name: Simulate longer running job
+  pause:
+    seconds: 10
+
+...

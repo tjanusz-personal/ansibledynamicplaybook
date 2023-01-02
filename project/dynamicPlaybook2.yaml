@@ -1,0 +1,71 @@
+---
+# This playbook deploys the whole application stack in this site.
+# Attempts to demonstrate
+# pre_tasks - run before everything and add correct roles we want to play
+# roles - run static defined roles next (anything we always want to play)
+# tasks - run any tasks defined in this section
+#   uses loop to read array variable of all roles to dynamically include and run
+# 
+
+- name: Example for how to run pre/post and conditional roles
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  vars:
+    roles_to_run: []
+
+  # these always run first
+  # determine which roles to include for each type of role supported (e.g. OS, DB, BODS)
+  # Added some dictionary checking just to be safe (probably more succinct way to check this but trying to keep as clean as possible)
+  pre_tasks:
+    - name: Validate OS Version 
+      fail:
+        msg: "Invalid OS vesion specified"
+      when: "'{{default_os_ver}}' not in {{supported_os_roles_dict}}"
+
+    - name: Validate DB Version 
+      fail:
+        msg: "Invalid DB vesion specified"
+      when: "'{{default_db_ver}}' not in {{supported_db_roles_dict}}"
+
+    - name: Validate BODS Version 
+      fail:
+        msg: "Invalid BODS vesion specified"
+      when: "'{{default_bods_ver}}' not in {{supported_bods_roles_dict}}"
+
+    - name: Lookup OS Version and add role to roles_to_run
+      set_fact:
+        roles_to_run: "{{ roles_to_run }} + [ '{{ supported_os_roles_dict[default_os_ver] }}' ]"
+
+    - name: Lookup BODS Version and add role to roles_to_run
+      set_fact:
+        roles_to_run: "{{ roles_to_run }} + [ '{{ supported_bods_roles_dict[default_bods_ver] }}' ]"
+
+    - name: Lookup DB Version and add role to roles_to_run
+      set_fact:
+        roles_to_run: "{{ roles_to_run }} + [ '{{ supported_db_roles_dict[default_db_ver] }}' ]"
+
+
+  # Use Tasks to dynamically include correct roles
+  tasks:
+    - name: Playbook Task - Print a message
+      debug:
+        msg: "task ran after static roles but before import of role. roles_to_run: {{ roles_to_run }}"
+
+    - name: Print all roles to run
+      loop: "{{roles_to_run}}"
+      debug:
+        msg: "{{item}}"
+
+    # loop through array of roles and dynamically include them
+    - name: Dynamically include roles to run
+      loop: "{{roles_to_run}}"
+      include_role:
+        name: '{{item}}'
+
+  # Add any static roles we always want to run everytime
+  roles:
+    - staticRole
+
+...

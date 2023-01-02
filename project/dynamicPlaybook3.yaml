@@ -1,0 +1,35 @@
+---
+# This playbook deploys the whole application stack in this site.
+# Attempts to demonstrate
+# roles - run static defined roles next
+# tasks - run any tasks defined in this section
+#   uses loop to read array variable of all roles to dynamically include and run
+# 
+
+- name: Example for how to run pre/post and conditional roles
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  # specific tasks to execute w/in this playbook
+  tasks:
+    - name: Playbook Task - Print a message
+      debug:
+        msg: "task ran after static roles but before import of role. roles_to_run: {{ hardcoded_roles_to_run }}"
+
+    - name: Print all roles to run
+      loop: "{{hardcoded_roles_to_run}}"
+      debug:
+        msg: "{{item}}"
+
+    # loop through array of roles and dynamically include them
+    - name: Dynamically include roles to run
+      loop: "{{hardcoded_roles_to_run}}"
+      include_role:
+        name: '{{item}}'
+
+  # static roles to always run everytime
+  roles:
+    - staticRole
+
+...

@@ -1,0 +1,13 @@
+---
+
+## BODS4300 tasks to print out statements for tasks
+
+- name: Debug listing of important variables
+  debug: 
+    msg: "BODS4300 Tasks START - Customer: {{default_customer_abbrev}} OS Version: {{default_os_ver}}"
+
+- name: Simulate longer running job
+  pause:
+    seconds: 10
+
+...

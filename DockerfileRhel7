@@ -1,0 +1,20 @@
+FROM registry.access.redhat.com/ubi7/python-27
+
+# these images didn't work need someone to tell me why
+# FROM registry.access.redhat.com/ubi7/ubi:7.9-901
+# FROM registry.access.redhat.com/ubi7/ubi-init:7.9-65
+
+# RUN yum -y update 
+# RUN pip install –upgrade setuptools
+
+# try and update pip (can't do latest crashed)
+# RUN pip install --upgrade pip
+# forced specific version
+RUN pip install --upgrade pip==18.1
+
+# try and install specific ansible version
+RUN pip install 'ansible==2.9.22'
+
+# running image
+# docker run -it --mount type=bind,source="$(pwd)",target=/app  ansible7x_local /bin/bash
+

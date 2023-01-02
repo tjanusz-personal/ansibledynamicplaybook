@@ -1,0 +1,78 @@
+---
+# This playbook deploys the whole application stack in this site.
+# Attempts to demonstrate
+# pre_tasks - run before everything
+# post_tasks - run after everything
+# roles - run static defined roles next
+# tasks - run any tasks defined in this section
+#   uses when logic to determine which role to include (very verbose method)
+# 
+
+- name: Example for how to run pre/post and conditional roles
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  # tasks always run before everything
+  pre_tasks:
+    - name: Playbook Pre Task - Print a pre-task message
+      debug:
+        msg: "pre task message - this happens before roles and tasks OS_VER: {{ default_os_ver }}"
+
+  # tasks always run after everything
+  post_tasks:
+    - name: Playbook Post Task - Print a post-task message
+      debug:
+        msg: "post task message - this happens after all roles and tasks OS_VER: {{ default_os_ver }}"
+
+  # specific tasks to run AFTER any static roles
+  tasks:
+    - name: Playbook Task - Print a message
+      debug:
+        msg: "task ran after static roles but before import of role  OS_VER: {{ default_os_ver }}"
+
+    # when using import_role it will skip all tasks w/in the role (so prob not good choice?)
+    # - name: Import the rhel7x role
+    #   import_role:
+    #     name: rhel7x
+    #   when: "default_os_ver == 'rhel78'"
+
+    - name: Include the rhel7x role
+      include_role:
+        name: rhel7x
+      when: "default_os_ver == 'rhel78'"
+
+    - name: Include the rhel8x role
+      include_role:
+        name: rhel8x
+      when: "default_os_ver == 'rhel82'"
+
+    - name: Include the Ora19c role
+      include_role:
+        name: Ora19c
+      when: "default_db_ver == 'oracle19c'"
+
+    - name: Include the Ora20c role
+      include_role:
+        name: Ora20c
+      when: "default_db_ver == 'oracle20c'"
+
+    - name: Include the BODS4200 Role
+      include_role:
+        name: Bods4200
+      when: "default_bods_ver == '4200'"
+
+    - name: Include the BODS4300 Role
+      include_role:
+        name: Bods4300
+      when: "default_bods_ver == '4300'"
+
+    - name: Playbook Task - Print a message
+      debug:
+        msg: "after we ran our imported role"
+
+  # static roles to always run everytime
+  roles:
+    - staticRole
+
+...

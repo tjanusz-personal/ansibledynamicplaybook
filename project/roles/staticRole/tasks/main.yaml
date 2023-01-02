@@ -1,0 +1,21 @@
+---
+
+## StaticRole tasks to print out statements for tasks
+
+- name: Debug listing of important variables
+  debug: 
+    msg: "StaticRole - Tasks start"
+
+# - name: Throw error on invalid directory
+#   get_url:
+#     url: http://example.com/path/file.conf
+#     dest: /etc/foo.conf
+#     mode: '0440'
+#   ignore_errors: true
+
+- name: Debug listing of important variables
+  debug: 
+    msg: "StaticRole - Tasks end"
+
+
+...

@@ -1,0 +1,27 @@
+---
+# This playbook invokes the dynamicPlaybook3 with given set of values
+# trying to use assert to test values but it doesn't work way expected
+# 
+
+- import_playbook: dynamicPlaybook3.yaml
+  vars:
+    hardcoded_roles_to_run:
+      - rhel8x
+      - Ora20c
+      - Bods4200
+
+- name: Example attempt at testing playbook3
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: Print roles ran
+      debug:
+        msg: "roles ran was {{hardcoded_roles_to_run}}"
+
+    - name: Assert hardcoded roles are run
+      assert:
+        that:
+          -  "{{ hardcoded_roles_to_run | length }} == 3"
+        fail_msg: "did not work"
